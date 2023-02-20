@@ -66,10 +66,7 @@ pub fn server_capabilities(config: &Config) -> ServerCapabilities {
         code_action_provider: Some(code_action_capabilities(config.caps())),
         code_lens_provider: Some(CodeLensOptions { resolve_provider: Some(true) }),
         document_formatting_provider: Some(OneOf::Left(true)),
-        document_range_formatting_provider: match config.rustfmt() {
-            RustfmtConfig::Rustfmt { enable_range_formatting: true, .. } => Some(OneOf::Left(true)),
-            _ => Some(OneOf::Left(false)),
-        },
+        document_range_formatting_provider: Some(OneOf::Left(true)),
         document_on_type_formatting_provider: Some(DocumentOnTypeFormattingOptions {
             first_trigger_character: "=".to_string(),
             more_trigger_character: Some(more_trigger_character(config)),

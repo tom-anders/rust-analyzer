@@ -1762,6 +1762,7 @@ fn run_rustfmt(
         RustfmtConfig::Rustfmt { extra_args, enable_range_formatting } => {
             let mut cmd = process::Command::new(toolchain::rustfmt());
             cmd.envs(snap.config.extra_env());
+            cmd.arg("+nightly");
             cmd.args(extra_args);
             // try to chdir to the file so we can respect `rustfmt.toml`
             // FIXME: use `rustfmt --config-path` once
@@ -1786,18 +1787,6 @@ fn run_rustfmt(
             }
 
             if let Some(range) = range {
-                if !enable_range_formatting {
-                    return Err(LspError::new(
-                        ErrorCode::InvalidRequest as i32,
-                        String::from(
-                            "rustfmt range formatting is unstable. \
-                            Opt-in by using a nightly build of rustfmt and setting \
-                            `rustfmt.rangeFormatting.enable` to true in your LSP configuration",
-                        ),
-                    )
-                    .into());
-                }
-
                 let frange = from_proto::file_range(snap, text_document, range)?;
                 let start_line = line_index.index.line_col(frange.range.start()).line;
                 let end_line = line_index.index.line_col(frange.range.end()).line;
